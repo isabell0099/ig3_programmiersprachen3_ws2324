@@ -1,0 +1,164 @@
+*{
+    box-sizing: border-box; 
+}
+
+body{
+    margin: 0; 
+    padding: 0;
+}
+
+#wrapper{
+        margin: 30px;
+        width: 700px;
+        height: 1000px; 
+       
+        display: grid;
+        grid-template-columns: 1fr; 
+        grid-template-rows: 3fr 1fr 2fr;
+        grid-template-areas: 
+        "Header "
+        "main "
+        "footer"
+        ;
+
+        background-color: yellow; 
+        
+
+}
+
+header {
+    grid-area: Header;
+    
+
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr; 
+    grid-template-areas: 
+        "logo title title "
+        "picture picture picture "
+        
+}
+main{
+    grid-area: main;
+   
+
+    
+    display: grid;
+    grid-template-columns: 1fr 2fr 3fr; 
+    grid-template-areas: 
+
+    "box1 box2 box3"
+    
+    ; 
+   
+}
+
+footer{
+    grid-area: footer;
+
+    display: grid;
+    grid-template-areas: 
+    
+    "info info info"
+    "infozwei infozwei infozwei"
+    
+    ;
+}
+
+#cardnumber {
+    font-size: 100px;
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    background-color: aquamarine;
+    width: 145px;
+    padding: 10px;
+    border: 6px solid black;
+    border-radius: 25% 25% 25% 10px ;
+    grid-area: logo;
+    
+}
+#description { 
+    font-size: 90px;
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    width: 700px;
+    padding: 10px;
+    border: 6px solid black;
+    border-radius: 25px 25px 10px 10px ;
+    grid-area: title;
+    
+}
+
+img {
+    border: 6px solid black;
+    border-radius: 25px 25px 25px 25px ;
+    grid-area: picture; 
+    
+    
+}
+
+#cardnumberZwei{
+    background-color:mediumturquoise;
+    border: 6px solid black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    border-radius: 15px 15px 15px 15px ;
+    width: 145px; 
+    height: 100px;
+    font-size: 60px;
+    grid-area: box1; 
+   
+}
+
+#dimenions{
+    border: 6px solid black;
+    text-transform: uppercase ;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-decoration-line:underline;
+    border-radius: 15px 15px 15px 15px ;
+    width: 280px; 
+    height: 100px;
+    font-size: 40px;
+    grid-area: box2; 
+    
+
+}
+#Dimands{
+    border: 6px solid black;
+    text-transform: uppercase ;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-decoration-line:underline;
+    border-radius: 15px 15px 15px 15px ;
+    width: 280px; 
+    height: 100px;
+    font-size: 40px;
+    grid-area: box3; 
+    
+}
+#Meish{
+    border: 6px solid black;
+    text-transform: uppercase ;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    border-radius: 15px 15px 15px 15px ;
+    width: 680px; 
+    height: 200px;
+    font-size: 40px;
+    grid-area: info;
+   
+}
+
+#Mass{
+    border: 6px solid black;
+    text-transform: uppercase ;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    border-radius: 15px 15px 15px 15px ;
+    width: 680px; 
+    height: 200px;
+    font-size: 40px;
+    grid-area: infozwei; 
+   
+
+}
+
+

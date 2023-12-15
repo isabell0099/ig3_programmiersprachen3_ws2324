@@ -1,0 +1,74 @@
+*{
+    box-sizing: border-box;
+
+    
+}
+
+body{
+    margin: 0; 
+    padding: 0;
+}
+
+#wrapper{
+    margin: auto;
+    width: 800px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-areas:
+        "header header"
+        "navi navi"
+        "aside gelb"
+        "aside orange"
+        "fuss fuss";
+        gap: 5px;
+}
+header{
+    margin:0px;
+    
+    background-color: lightcoral;
+   
+    grid-area: header;
+}
+
+nav{
+  
+    background-color: violet;
+    grid-area: navi;
+}
+
+
+
+aside {
+    background-color: green;
+    grid-area: aside;
+    
+}
+
+#yellow{
+   
+    background-color: rgb(240, 240, 112);
+    grid-area: gelb;
+    
+   
+
+}
+
+ #orange{
+    
+    background-color: lightsalmon;
+    grid-area: orange;
+    
+
+}
+
+footer{
+
+  
+    background-color: lightpink;
+   
+    grid-area: fuss;
+   
+    
+}

@@ -1,0 +1,66 @@
+*{
+    box-sizing: border-box;
+
+    
+}
+
+body{
+    margin: 0; 
+    padding:0; 
+}
+
+#wrapper{
+    width: 1000px;
+    margin: auto;
+}
+header{
+    margin:0px;
+    margin-bottom: 5px;
+    background-color: lightcoral;
+    height: 30px;
+}
+
+nav{
+    margin: 5px 0; 
+    background-color: violet;
+    height: 25px; 
+}
+main{
+    margin: 5px 0; 
+    height: 400px; 
+    width: 700px; 
+    display: inline-block;
+}
+
+aside{
+    margin: 5px; 
+    background-color: lightgreen;
+    height: 400px; 
+    width: 20%; 
+    display: inline-block;
+
+}
+
+#yellow{
+  
+    background-color: lightgoldenrodyellow;
+    height: 80%; 
+    
+   
+
+}
+
+#orange{
+    
+    background-color: lightsalmon;
+    height: 20%; 
+    
+
+}
+
+footer{
+
+    margin: 5px 0; 
+    background-color: lightpink;
+    height: 35px; 
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>video abspielen</title>
+
+    <style>
+        /* Standardmäßig verstecke das Video */
+        #myVideo {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Button zum Anzeigen und Abspielen des Videos -->
+    <button id="playButton" onclick="playVideo()">Video abspielen</button>
+    
+    <video id="myVideo" width="640" height="360">
+        <!-- Hier setzen Sie den Pfad zu Ihrer MOV-Datei -->
+        <source src="MagicEffekte/Spell_Hit_1_1220_2K.mov" type="video/quicktime">
+        Dein Browser unterstützt das Video-Tag nicht.
+    </video>
+
+    <script>
+        function playVideo(){
+            
+        const video = document.getElementById('myVideo');
+        video.style.display = 'block';
+        // Abspielen
+        video.play();
+
+        // Verstecke den Button
+        const playButton = document.getElementById('playButton');
+        playButton.style.display = 'none';
+
+
+        }
+        
+        // const video = document.getElementById('myVideo');
+    
+        // // Abspielen
+        // video.play();
+    
+        // Pause
+        // video.pause();
+    
+        // Aktuelle Zeit setzen (in Sekunden)
+        // video.currentTime = 30;
+    
+        // Ereignisse abhören
+        // video.addEventListener('ended', function() {
+        //     console.log('Video beendet');
+        // });
+    
+        // video.addEventListener('timeupdate', function() {
+        //     console.log('Aktuelle Zeit:', video.currentTime);
+        // });
+    </script>
+</body>
+</html>

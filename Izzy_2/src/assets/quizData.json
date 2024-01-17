@@ -1,0 +1,42 @@
+[
+    {
+        "key": "number_eggs",
+        "questions": "Welcher dieser Dinosaurier legte die meisten Eier in sein Nest?"
+    },
+    {
+        "key": "tooth_size",
+        "question": "Welcher Dinosaurier brauchte die meisten Zähne, um seine Mahlzeit zu essen?"
+    },
+    {
+        "key": "iq",
+        "question": "Welcher dieser Dinosaurier hat den höchsten IQ?"
+    },
+    {
+        "key": "speed",
+        "question": "Welcher dieser Dinosaurier war wohl der Schnellste?"
+    },
+    {
+        "key": "territorial_range",
+        "question": "Welcher dieser Dinosaurier hatte das größte Territorial?"
+    },
+    {
+        "key": "nest_size",
+        "question": "Welcher dieser Dinosaurier hatte das größte Nest für seine Eier?"
+    },
+    {
+        "key": "number_skeletons",
+        "question": "Welcher dieser Dinosaurier hatte die meisten Knochen?"
+    },
+    {
+        "key": "years",
+        "question": "Welcher Dinosaurier hat am längsten gelebt?"
+    },
+    {
+        "key": "egg_size",
+        "question": "Welcher Dinosaurier hat das größte Ei gelegt?"
+    },
+    {
+        "key": "bite_force",
+        "question": "Welcher Dinosaurier hatte die stärkste Bisskraft?"
+    }
+]

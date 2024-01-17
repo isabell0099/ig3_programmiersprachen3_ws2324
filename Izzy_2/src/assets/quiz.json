@@ -1,0 +1,32 @@
+[
+    {
+        "question": "Welcher dieser Dinosaurier ist der Schwerste?",
+        "difficulty": "medium",
+        "fragetyp": "2"
+    },
+    {
+        "question": "In welchem Zeitalter lebten die Dinosaurier?",
+        "options": ["Trias", "Jura", "Kreide", "Devon"],
+        "correctAnswer": "Jura",
+        "difficulty": "easy",
+        "fragetyp": "3"
+    },
+    {
+        "question": "Wie viele Zähne hat dieser Dinosaurier?",
+        "difficulty": "high",
+        "fragetyp": "1"  
+    },
+    {
+        "question": "Wie wird die Gruppe von Dinosauriern bezeichnet, die sich ausschließlich von Pflanzen ernährt?",
+        "options": ["Theropoden", "Sauropoden", "Ornithischier", "Ceratopsier"],
+        "correctAnswer": "Ornithischier",
+        "fragetyp": "3"
+      },
+      {
+        "question": "Welcher dieser Dinosaurier hat den höchsten IQ?",
+        "difficulty": "high",
+        "fragetyp": "2"
+    }
+]
+
+

@@ -110,7 +110,7 @@ button{
 		margin-left: 10px;
 		flex-shrink: 0;
 		border-radius: 80px;
-		background: lightgray;
+		background: white;
 		font-family: "Inter", sans-serif;
         font-size: larger;
 		cursor: pointer;

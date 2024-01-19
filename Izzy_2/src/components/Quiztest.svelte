@@ -1,5 +1,7 @@
 <script>
     import StartQuiz from "./StartQuiz.svelte";
+    import CorrectAnswer from "./CorrectAnswer.svelte";
+    import IncorrectAnswer from "./IncorrectAnswer.svelte";
     import { onMount } from "svelte";
     let dinoJson = [];
     let quizJson = [];
@@ -7,6 +9,7 @@
     let questions = [];
     let quizStarted = false;
     let currentQuestionIndex = 0;
+    let QuestionArray = [];
   
     // Variablen für randomFrage
     let AnzahlDinos = 32;
@@ -14,6 +17,11 @@
     let DinoArray = [];
     let json1;
     let currentKeyToCompare = '';
+
+    let showQuizContent = true;
+    let showCorrectAnswer = false;
+    let showIncorrectAnswer = false;
+    
    
   
     function getRandoms(max) {
@@ -110,8 +118,8 @@
         console.log(num);
         
         DinoArray.push(dinoJson[num]);
-        console.log(DinoArray);
       }
+      console.log(DinoArray);
       
       
       
@@ -141,6 +149,17 @@
   let Solution = DinoArray[DinoIndex];
    console.log(Solution.name);
    console.log("End RandomQuestionManyDinos"); 
+
+
+   //object für question Array 
+   let object = {
+    Key : currentKeyToCompare,
+    Options: DinoArray,
+    Answer: Solution.name,
+   }
+
+   QuestionArray.push(object);
+   console.log(QuestionArray);
     }
 
     function skipQuestion() { //funktion für skip button
@@ -156,7 +175,33 @@
 
   function selectOption(optionIndex) {
     // Hier kannst du die Logik für die ausgewählte Antwortoption implementieren
-    console.log(`Option ${optionIndex + 1} ausgewählt`);
+    const selectedDino = QuestionArray[currentQuestionIndex].Options[optionIndex];
+    const correctAnswer = QuestionArray[currentQuestionIndex].Answer;
+
+    if (selectedDino.name === correctAnswer) {
+      showCorrectAnswer = true;
+      showIncorrectAnswer = false;
+    } else {
+      showIncorrectAnswer = true;
+      showCorrectAnswer = false;
+    }
+    showQuizContent = false;
+  }
+
+  function onNext() {
+    // Logik für den Übergang zur nächsten Frage
+    if (currentQuestionIndex < QuestionArray.length - 1) {
+      currentQuestionIndex++;
+      
+      RandomQuestionManyDinos(); // Aktualisiere die Dinos für die nächste Frage
+      showQuizContent = false; // Setze showQuizContent auf true, um die
+      showCorrectAnswer = false;
+      showIncorrectAnswer = false;
+
+    } else {
+      console.log("Ende des Quiz");
+      // Hier kannst du weitere Aktionen durchführen, wenn das Quiz zu Ende ist
+    }
   }
 
     </script>
@@ -167,7 +212,8 @@
         <StartQuiz on:startQuiz={() => (quizStarted = true)} />
       {/if}
   
-      {#if quizStarted}
+      {#if quizStarted && showQuizContent }
+       
         <h1>Quiz</h1>
         {#await method()}
           <p>Loading ...</p>
@@ -180,14 +226,26 @@
           {#if value.length > 0 && currentQuestionIndex < value.length}
           <div>
             <h2>{value[currentQuestionIndex].question}</h2>
-            {#each DinoArray as dino, i}
+            {#each QuestionArray[currentQuestionIndex].Options as dino, i}
             <button on:click={() => selectOption(i)}>{dino.name}</button>
             {/each}
           </div>
           <button on:click={skipQuestion}>Skip</button>
         {/if}
-        {/await}
+  
+
+        {#if showCorrectAnswer}
+        <CorrectAnswer onNext={onNext} />
       {/if}
+
+      {#if showIncorrectAnswer}
+      <IncorrectAnswer onNext={onNext} />
+      {/if}
+
+      {/await}
+      
+      {/if}
+      
     </div>
   </main>
   

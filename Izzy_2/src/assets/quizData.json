@@ -1,7 +1,7 @@
 [
     {
         "key": "number_eggs",
-        "questions": "Welcher dieser Dinosaurier legte die meisten Eier in sein Nest?"
+        "question": "Welcher dieser Dinosaurier legte die meisten Eier in sein Nest?"
     },
     {
         "key": "tooth_size",

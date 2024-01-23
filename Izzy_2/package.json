@@ -17,6 +17,7 @@
     "@mdi/js": "^7.4.47",
     "gmynd": "^1.0.5",
     "material-icons": "^1.13.12",
+    "openai": "^4.25.0",
     "svelte-spa-router": "^4.0.1"
   }
 }

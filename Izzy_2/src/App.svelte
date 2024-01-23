@@ -5,10 +5,12 @@
 
   import Quiz from "./components/Quiztest.svelte";
   import Home from "./components/Home.svelte";
+  import PlayerName from "./components/PlayerName.svelte";
 
   const routes = {
     "/": Home,
-    "/quiz": Quiz 
+    "/quiz": Quiz,
+    "/PlayerName": PlayerName
   };
 </script>
 

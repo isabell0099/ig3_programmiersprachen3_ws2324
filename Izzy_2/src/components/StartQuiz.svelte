@@ -1,13 +1,19 @@
 
 
 <script>
+   
      import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
+
   
     const dispatch = createEventDispatcher();
   
     function startQuiz() {
       dispatch("startQuiz");
+    }
+
+    function startPlayername(){
+      dispatch("startPlayername")
     }
 
 
@@ -72,7 +78,9 @@
 
  
    
-    <button on:click={startQuiz}>Start</button>
+    <button class="startButton"on:click={startQuiz}>Start</button>
+
+    
 
    
 
@@ -96,7 +104,7 @@
 
 
 
-button{
+.startButton{
         position: fixed;
         left: 50%;
        top: 50%;

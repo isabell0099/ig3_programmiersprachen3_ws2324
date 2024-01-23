@@ -1,5 +1,12 @@
 <script>
     export let onNext;
+
+console.log("inCorrectAnswer component mounted");
+
+function handleNext() {
+  console.log("Next button clicked from inCorrectAnswer component");
+  onNext();
+}
   </script>
   
   <main>

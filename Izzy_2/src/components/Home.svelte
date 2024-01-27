@@ -6,6 +6,7 @@
     import Header from "./Header.svelte";
     import Main from "./Main.svelte";
     
+    
     let headerValue = "";
 	let mainData = [];
 

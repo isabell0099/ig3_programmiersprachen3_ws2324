@@ -1,4 +1,5 @@
 <script>
+	
 	import 'material-icons/iconfont/material-icons.css';
 	export let value;
 	let filter = "All"
@@ -17,7 +18,7 @@ function toggleDropdown() {
 	<div class="nav">
 		<img class="imagelogo" src="/images/logo.png" alt="This is a logo" />
 
-		<div class="divBox1">
+		<div class="searchingDiv">
 			<input
 				id="searchField"
 				class="search-input"
@@ -25,12 +26,13 @@ function toggleDropdown() {
 				bind:value
 				on:input
 				placeholder="Suche nach Dinosaurier..."
-			/>
-			
+			/>	
 		</div>
+
+		
 		<div class="dropdown" on:click={toggleDropdown}>
 			<button class="buttonsearch" >
-				<span class="material-icons">
+				<span class="material-icons" style="color:darkgrey;">
 					filter_alt
 				</span>
 		</button>
@@ -49,33 +51,16 @@ function toggleDropdown() {
 			{/if}
 		  </div>
 
-		<div class="divBox2">
-			<a
-				href="https://www.instagram.com"
-				target="_blank"
-				class="buttonsocialmedia"
-			>
-				<img
-					src="../images/icons/instagram.png"
-					alt="instagram"
-					height="32"
-				/></a
-			>
-			<a
-				href="https://www.facebook.com"
-				target="_blank"
-				class="buttonsocialmedia"
-			>
-				<img
-					src="../images/icons/Vector.png"
-					alt="facebook"
-					height="32"
-				/></a
-			>
+		<div class="buttonsDiv">
+			<a class="buttonsocialmedia" href="https://www.facebook.com" target="_blank" style="text-decoration:none;">
+                <span class="material-icons" style="color:darkgrey;">facebook</span>
+            </a>
+            <a class="buttonsocialmedia" href="https://www.instagram.com" target="_blank" style="text-decoration:none;">
+                <span class="instagram-icon"></span>
+            </a>
+			
 
-					
-
-			<a class="buttonsearch" href="#/quiz" style="text-decoration: none;"> Quiz </a>
+			<a class="buttonsearch" href="#/quiz" style="text-decoration: none; background:lightgrey;"> Quiz </a>
 		</div>
 	</div>
 	<div class="navHandy">
@@ -103,11 +88,12 @@ function toggleDropdown() {
 		background: #272727;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 	}
 
 	.search-input {
-		width: 60%;
-		max-width: 50%;
+		width: 350px;
+		max-width: 55%;
 		height: 60px;
 		flex-shrink: 0;
 		border-radius: 80px;
@@ -136,7 +122,7 @@ function toggleDropdown() {
 		height: 60px;
 		justify-content: center;
 		align-items: center;
-		margin-left: 15px;
+		margin-left: 10px;
 		flex-shrink: 0;
 		border-radius: 80px;
 		background: #393939;
@@ -145,6 +131,15 @@ function toggleDropdown() {
 		padding: 8px;
 		margin-top: 10px;
 	}
+
+	.instagram-icon{
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: url('images/icons/icons8-instagram-48.png');
+        background-size: contain;
+    }
+
 	.nav {
 		display: flex;
 		justify-content: space-between;
@@ -155,15 +150,15 @@ function toggleDropdown() {
 		display: none;
 	}
 
-	.divBox1 {
+	.searchingDiv {
 		display: flex;
 		width: 45%;
 	}
-	.divBox2 {
+	.buttonsDiv {
 		display: flex;
-		justify-content: right;
+		justify-content: flex-end;
 		margin-right: 30px;
-		width: 40%;
+		
 	}
 	.buttonsearch {
 		display: flex;
@@ -174,7 +169,7 @@ function toggleDropdown() {
 		margin-left: 10px;
 		flex-shrink: 0;
 		border-radius: 80px;
-		background: lightgray;
+		background: #393939;
 		font-family: "Inter", sans-serif;
 		cursor: pointer;
 		color: #393939;
@@ -199,6 +194,7 @@ function toggleDropdown() {
 	font-size: 16px;
 	margin-left: 15px;
 	width: 200px;
+	opacity: 90%;
 
   }
 
@@ -206,6 +202,7 @@ function toggleDropdown() {
     color: rgb(109, 107, 107);
     padding: 12px 16px;
     display: block;
+	
   }
 
   .dropdown-content div:hover {

@@ -3,14 +3,14 @@
 
   // Components
 
-  import Quiz from "./components/Quiztest.svelte";
+  import Quiz from "./components/Quiz.svelte";
   import Home from "./components/Home.svelte";
   import PlayerName from "./components/PlayerName.svelte";
 
   const routes = {
     "/": Home,
     "/quiz": Quiz,
-    "/PlayerName": PlayerName
+    "/playerName": PlayerName
   };
 </script>
 

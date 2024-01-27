@@ -12,9 +12,7 @@
       dispatch("startQuiz");
     }
 
-    function startPlayername(){
-      dispatch("startPlayername")
-    }
+  
 
 
 
@@ -78,7 +76,7 @@
 
  
    
-    <button class="startButton"on:click={startQuiz}>Start</button>
+    <button class="startButton"on:click={startQuiz}>Play Quiz</button>
 
     
 
@@ -109,8 +107,8 @@
         left: 50%;
        top: 50%;
         transform: translate(-50%, -50%);
-		width: 160px;
-		height: 70px;
+		  width: 160px;
+		  height: 70px;
         display: flex;
         justify-content: center;
        align-items: center;

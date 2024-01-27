@@ -1,1219 +1,413 @@
-<!-- <script>
-
-    import { onMount } from 'svelte';
-  
-    let questions = [
-      {
-        question: 'Was ist der größte Dinosaurier?',
-        options: ['Tyrannosaurus Rex', 'Brachiosaurus', 'Spinosaurus', 'Stegosaurus'],
-        correctAnswer: 'Brachiosaurus'
-      },
-
-      {
-        question: 'Welcher Dinosaurier wird oft als "König der Echsen" bezeichnet?',
-        options: ['Triceratops', 'Stegosaurus', 'Tyrannosaurus rex', 'Brachiosaurus'],
-        correctAnswer: 'Tyrannosaurus rex'
-      },
-      
-      {
-        question: 'Wie wird die Gruppe von Dinosauriern bezeichnet, die sich ausschließlich von Pflanzen ernährt?',
-        options: ['Theropoden', 'Sauropoden', 'Ornithischier', 'Ceratopsier'],
-        correctAnswer: 'Ornithischier'
-      },
-      
-      {
-        question: 'In welchem Zeitalter lebten die Dinosaurier?',
-        options: ['Trias', 'Jura', 'Kreide', 'Devon'],
-        correctAnswer: 'Jura'
-      },
-      {
-        question: 'Welcher Dinosaurier hatte wahrscheinlich Federn und wird oft als Vorfahre der Vögel betrachtet?',
-        options: ['Velociraptor', 'Triceratops', 'Brachiosaurus', 'Ankylosaurus'],
-        correctAnswer: 'Velociraptor'
-      },
-      {
-        question: 'Welcher Dinosaurier ist für den längsten Hals unter den Dinosauriern bekannt?',
-        options: ['Diplodocus', 'Brachiosaurus', 'Apatosaurus', 'Argentinosaurus'],
-        correctAnswer: 'Brachiosaurus'
-      },
-      {
-        question: 'Welcher Dinosaurier war vermutlich der größte Fleischfresser?',
-        options: ['Allosaurus', 'Spinosaurus', 'Velociraptor', 'Tyrannosaurus rex'],
-        correctAnswer: 'Spinosaurus'
-      },
-      {
-        question: 'Was ist der wissenschaftliche Name für die Familie der gefiederten Dinosaurier, zu der auch der Tyrannosaurus rex gehören könnte?',
-        options: ['Theropoda', 'Ornithischia', 'Sauropoda', 'Ceratopsia'],
-        correctAnswer: 'Theropoda'
-      },
-
-      {
-        question: 'Welcher Dinosaurier wird als "Dach der Welt" bezeichnet und wurde in Tibet entdeckt?',
-        options: ['Brachiosaurus', 'Plateosaurus', 'Shunosaurus', 'Qianzhousaurus'],
-        correctAnswer: 'Shunosaurus'
-      },
+<script>
+  import StartQuiz from "./StartQuiz.svelte";
+  import CorrectAnswer from "./CorrectAnswer.svelte";
+  import IncorrectAnswer from "./IncorrectAnswer.svelte";
+  import PlayerName from "./PlayerName.svelte";
+  import { createEventDispatcher } from "svelte";
 
 
-    ];
+  let nameGenerated = false;
+  let dinoJson = [];
+  let quizJson = [];
+  let numbers;
+  let questions = [];
+  let quizStarted = false;
+  let currentQuestionIndex = 0;
+  let QuestionArray = [];
+
+  let quizCompleted = false;
+
   
-    let currentQuestion = 0;
-    let userAnswers = Array(questions.length).fill(null);
-    let score = 0;
-  
-    const startQuiz = () => {
-      currentQuestion = 0;
-      userAnswers = Array(questions.length).fill(null);
-      score = 0;
-    };
-  
-    const selectAnswer = (answer) => {
-      userAnswers[currentQuestion] = answer;
-    };
-  
-    const submitAnswer = () => {
-      const correctAnswer = questions[currentQuestion].correctAnswer;
-      if (userAnswers[currentQuestion] === correctAnswer) {
-        score += 250;
-      } else {
-        score -= 50; // Minuspunkte für falsche Antworten
+
+  // Variablen für randomFrage
+  let AnzahlDinos = 32;
+  let RandomZahlen = [];
+  let DinoArray = [];
+  let json1;
+  let currentKeyToCompare = "";
+
+  let showQuizContent = false;
+  let showCorrectAnswer = false;
+  let showIncorrectAnswer = false;
+
+  let totalQuestions ; // Setze die Gesamtanzahl der Fragen
+  let progress = 1; // Fortschritt beginnt bei 1
+
+  function getRandoms(max) {
+    let values = [];
+    for (let i = 0; i < 6; i++) {
+      while (!values[i] && values[i] != 0) {
+        let value = Math.random() * max;
+        value = Math.round(value);
+        if (!values.includes(value)) {
+          values[i] = value;
+        }
       }
-  
-      // Nächste Frage anzeigen oder Quiz beenden
-      currentQuestion += 1;
-      if (currentQuestion === questions.length) {
-        // Quiz beendet
-      }
-    };
-  
-    const skipQuestion = () => {
-      currentQuestion += 1;
-      if (currentQuestion === questions.length) {
-        // Quiz beendet
-      }
-    };
-  
-    onMount(() => {
-      // Hier kannst du auf die Startseite navigieren oder weitere Initialisierungen vornehmen
-    });
+    }
+    return values;
+  }
 
+
+
+  async function method() {
+    const response1 = await fetch("./src/assets/data.json");
+    const response2 = await fetch("./src/assets/quizData.json");
+    const json1 = await response1.json();
+    const json2 = await response2.json();
+    dinoJson = json1;
+    quizJson = json2;
+
+    numbers = getRandoms(quizJson.length - 1);
+    RandomZahlen = []; // Zurücksetzen der RandomZahlen für jede Frage
+    DinoArray = []; // Zurücksetzen des DinoArray für jede Frage
+
+    
+console.log(numbers);
+    for (let i = 0; i < numbers.length; i++) {
+      let currentKeyIndex = numbers[i];
+      currentKeyToCompare = quizJson[currentKeyIndex].key; // Setze den aktuellen key-Wert in der Reihenfolge der gestellten Fragen
+      console.log(currentKeyToCompare);
+
+      await RandomQuestionManyDinos();
+
+      console.log(numbers[i]);
+
+      questions.push(quizJson[currentKeyIndex]);
+    }
+    totalQuestions = QuestionArray.length;
+    return questions;
+  }
+
+  async function RandomQuestionManyDinos() {
+    console.log("Quiz-Teil wird angezeigt")
+    DinoArray = [];
+    console.log("Start RandomQuestionManyDinos");
+    const response1 = await fetch("./src/assets/data.json");
+    const json1 = await response1.json();
+    dinoJson = json1;
+
+    // Vor jeder Frage zurücksetzen
+    RandomZahlen = [];
+
+    for (let i = 0; i < 4; i++) {
+      let num = Math.floor(Math.random() * AnzahlDinos);
+      while (RandomZahlen.includes(num)) {
+        num = Math.floor(Math.random() * AnzahlDinos);
+      }
+      RandomZahlen.push(num);
+      console.log(num);
+
+      DinoArray.push(dinoJson[num]);
+    }
+    console.log(DinoArray);
 
     
 
+    let highestValue = DinoArray[0][currentKeyToCompare];
+    let DinoIndex = 0;
 
+    for (let i = 1; i < DinoArray.length; i++) {
+      if (DinoArray[i][currentKeyToCompare] > highestValue) {
+        highestValue = DinoArray[i][currentKeyToCompare];
+        DinoIndex = i;
+      }
+    }
 
+    let Solution = DinoArray[DinoIndex];
+    console.log(Solution.name);
+    console.log("End RandomQuestionManyDinos");
 
+    //object für question Array
+    let object = {
+      Key: currentKeyToCompare,
+      Options: DinoArray,
+      Answer: Solution.name,
+    };
 
+    QuestionArray.push(object);
+   
+    console.log(QuestionArray);
 
-
-  </script>
-  
-
-
-  <div class="quiz-container"> 
-
-        <div class="button-verlassen"> </div>
-        <div class="button-skip"> </div>
-        <div class=".question-container"> </div>
-        <div class=".picture-container"> </div>
-        <div class=".options-container"> </div>
-
-  </div>
-  
-  {#if currentQuestion === questions.length}
-    Quiz beendet, zeige Ergebnisse an 
-    <p>Quiz beendet. Deine Gesamtpunktzahl: {score}</p>
-  {:else}
-   Quiz läuft, zeige Frage an 
-    <h2>{questions[currentQuestion].question}</h2>
-    {#each questions[currentQuestion].options as option}
-      <label>
-        <input
-          type="radio"
-          bind:group={userAnswers[currentQuestion]}
-          value={option}
-          on:change={() => selectAnswer(option)}
-        />
-        {option}
-      </label>
-    {/each}
-    <button on:click={submitAnswer}>Antwort abschicken</button>
-    <button on:click={skipQuestion}>Überspringen</button>
-
-  {/if}
-
-  <style> 
+  }
 
  
 
-  .quiz-container{
-        width: 100%;
-		height: 100px;
-		flex-shrink: 0;
-		background: #272727;
-		display: flex;
-		align-items: center;
-    color: white; 
+  function selectOption(optionIndex) {
+    // Hier kannst du die Logik für die ausgewählte Antwortoption implementieren
+    const selectedDino =
+      QuestionArray[currentQuestionIndex].Options[optionIndex];
+    const correctAnswer = QuestionArray[currentQuestionIndex].Answer;
+
+    if (selectedDino.name == correctAnswer) {
+      console.log("Richtig");
+      showCorrectAnswer = true;
+      showIncorrectAnswer = false;
+    } else {
+      console.log("Falsch");
+      showIncorrectAnswer = true;
+      showCorrectAnswer = false;
+    }
+    // showQuizContent = false;
+  }
+
+  function onNext() {
     
-  }
+    if (currentQuestionIndex < QuestionArray.length - 1) {
+      currentQuestionIndex++;
 
-  h2{
-    color: white;
-  }
-  label{
-    color: lightgrey;
-  }
-
-</style> --> 
-
-<script>
-  import { onMount } from 'svelte';
-  
-
-
-  const CORS_PROXY_ENDPOINT = 'https://cors-anywhere.herokuapp.com/';
-  const END_POINT = 'https://quizzrapi.herokuapp.com/random';
-
-  let question = '';
-  let answers = [];
-  let isRight = '';
-  let numQuestions = 0;
-  let score = 0;
-
-
-  const data = [{
-		"name": "Brachiosaurus",
-		"group": "Large Sauropods",
-		"group_letter": "A",
-		"card number": 1,
-		"random_fact": "Tallest neck in dino history.",
-		"number_eggs": 12,
-		"territorial_range": 1500,
-		"iq": 3,
-		"years": 148,
-		"length": 25,
-		"height": 15,
-		"weight": 80000,
-		"number_skeletons": 10,
-		"number_teeth": 56,
-		"speed": 5,
-		"footprint": 60,
-		"nest_size": 300,
-		"tooth_size": 20,
-		"bite_force": 60000,
-		"egg_size": 20,
-		"brain_size": 300,
-		"jaw_size": 150,
-		"encephalization": 0.2,
-		"img": "images/dinobilder/Brachiosaurus.png"
-	},
-	{
-		"name": "Amargasaurus",
-		"group": "Large Sauropods",
-		"group_letter": "A",
-		"card number": 2,
-		"random_fact": "Showcased a distinctive double-sail feature.",
-		"number_eggs": 8,
-		"territorial_range": 800,
-		"iq": 2,
-		"years": 135,
-		"length": 9,
-		"height": 4,
-		"weight": 2000,
-		"number_skeletons": 3,
-		"number_teeth": 24,
-		"speed": 3,
-		"footprint": 30,
-		"nest_size": 120,
-		"tooth_size": 10,
-		"bite_force": 15000,
-		"egg_size": 10,
-		"brain_size": 50,
-		"jaw_size": 40,
-		"encephalization": 0.1,
-		"img": "images/dinobilder/Amargasaurus.png"
-	},
-	{
-		"name": "Diplodocus",
-		"group": "Large Sauropods",
-		"group_letter": "A",
-		"card number": 3,
-		"random_fact": "Possessed a tail capable of sonic cracks.",
-		"number_eggs": 10,
-		"territorial_range": 1000,
-		"iq": 2,
-		"years": 154,
-		"length": 27,
-		"height": 10,
-		"weight": 6000,
-		"number_skeletons": 8,
-		"number_teeth": 48,
-		"speed": 4,
-		"footprint": 40,
-		"nest_size": 180,
-		"tooth_size": 15,
-		"bite_force": 30000,
-		"egg_size": 15,
-		"brain_size": 80,
-		"jaw_size": 70,
-		"encephalization": 0.15,
-		"img": "images/dinobilder/Diplodocus.png"
-	},
-	{
-		"name": "Argentinosaurus",
-		"group": "Large Sauropods",
-		"group_letter": "A",
-		"card number": 4,
-		"random_fact": "Weightier than multiple elephants combined.",
-		"number_eggs": 15,
-		"territorial_range": 2000,
-		"iq": 1,
-		"years": 96,
-		"length": 35,
-		"height": 18,
-		"weight": 90000,
-		"number_skeletons": 5,
-		"number_teeth": 60,
-		"speed": 2,
-		"footprint": 70,
-		"nest_size": 250,
-		"tooth_size": 25,
-		"bite_force": 75000,
-		"egg_size": 25,
-		"brain_size": 30,
-		"jaw_size": 120,
-		"encephalization": 0.05,
-		"img": "images/dinobilder/Argentinosaurus.png"
-	},
-
-	{
-		"name": "Tyrannosaurus rex",
-		"group": "Big Predatory Theropods",
-		"group_letter": "B",
-		"card number": 1,
-		"random_fact": "Armed with banana-sized teeth and a terrifying bite.",
-		"number_eggs": 10,
-		"territorial_range": 500,
-		"iq": 5,
-		"years": 68,
-		"length": 12,
-		"height": 4.5,
-		"weight": 9000,
-		"number_skeletons": 20,
-		"number_teeth": 60,
-		"speed": 25,
-		"footprint": 40,
-		"nest_size": 120,
-		"tooth_size": 15,
-		"bite_force": 60000,
-		"egg_size": 12,
-		"brain_size": 100,
-		"jaw_size": 70,
-		"encephalization": 0.3,
-		"img": "images/dinobilder/rex.png"
-	},
-	{
-		"name": "Baryonyx",
-		"group": "Big Predatory Theropods",
-		"group_letter": "B",
-		"card number": 2,
-		"random_fact": "Specialized in a diet of fresh fish.",
-		"number_eggs": 8,
-		"territorial_range": 300,
-		"iq": 4,
-		"years": 125,
-		"length": 10,
-		"height": 3.5,
-		"weight": 2000,
-		"number_skeletons": 5,
-		"number_teeth": 32,
-		"speed": 20,
-		"footprint": 30,
-		"nest_size": 100,
-		"tooth_size": 12,
-		"bite_force": 30000,
-		"egg_size": 10,
-		"brain_size": 70,
-		"jaw_size": 50,
-		"encephalization": 0.25,
-		"img": "images/dinobilder/Baryonyx.jpg"
-	},
-	{
-		"name": "Allosaurus",
-		"group": "Big Predatory Theropods",
-		"group_letter": "B",
-		"card number": 3,
-		"random_fact": "Stood as the star predator of the Jurassic era.",
-		"number_eggs": 12,
-		"territorial_range": 400,
-		"iq": 3,
-		"years": 155,
-		"length": 9,
-		"height": 3,
-		"weight": 1500,
-		"number_skeletons": 15,
-		"number_teeth": 40,
-		"speed": 30,
-		"footprint": 25,
-		"nest_size": 80,
-		"tooth_size": 10,
-		"bite_force": 40000,
-		"egg_size": 8,
-		"brain_size": 60,
-		"jaw_size": 45,
-		"encephalization": 0.2,
-		"img": "images/dinobilder/Allusaurus.png"
-	},
-	{
-		"name": "Spinosaurus",
-		"group": "Big Predatory Theropods",
-		"group_letter": "B",
-		"card number": 4,
-		"random_fact": "Sported a sail-like structure and was an agile swimmer.",
-		"number_eggs": 15,
-		"territorial_range": 600,
-		"iq": 4,
-		"years": 95,
-		"length": 15,
-		"height": 6,
-		"weight": 7000,
-		"number_skeletons": 10,
-		"number_teeth": 48,
-		"speed": 22,
-		"footprint": 35,
-		"nest_size": 110,
-		"tooth_size": 14,
-		"bite_force": 45000,
-		"egg_size": 14,
-		"brain_size": 80,
-		"jaw_size": 60,
-		"encephalization": 0.25,
-		"img": "images/dinobilder/Spinosaurus.png"
-	},
-
-	{
-		"name": "Pteranodon",
-		"group": "Flyers",
-		"group_letter": "C",
-		"card number": 1,
-		"random_fact": "Ruled the skies with an impressive wingspan.",
-		"number_eggs": 2,
-		"territorial_range": 150,
-		"iq": 2,
-		"years": 88,
-		"length": 7,
-		"height": 2,
-		"weight": 25,
-		"number_skeletons": 10,
-		"number_teeth": 0,
-		"speed": 70,
-		"footprint": 0,
-		"nest_size": 20,
-		"tooth_size": 0,
-		"bite_force": 0,
-		"egg_size": 10,
-		"brain_size": 20,
-		"jaw_size": 0,
-		"encephalization": 0.1,
-		"img": "images/dinobilder/Pteranodon.png"
-	},
-	{
-		"name": "Quetzalcoatlus",
-		"group": "Flyers",
-		"group_letter": "C",
-		"card number": 2,
-		"random_fact": "Earned the title of the largest flying reptile.",
-		"number_eggs": 3,
-		"territorial_range": 200,
-		"iq": 2,
-		"years": 66,
-		"length": 10,
-		"height": 3.5,
-		"weight": 75,
-		"number_skeletons": 5,
-		"number_teeth": 0,
-		"speed": 80,
-		"footprint": 0,
-		"nest_size": 25,
-		"tooth_size": 0,
-		"bite_force": 0,
-		"egg_size": 12,
-		"brain_size": 30,
-		"jaw_size": 0,
-		"encephalization": 0.15,
-		"img": "images/dinobilder/Quetzalcoatlus.jpg"
-	},
-	{
-		"name": "Archaeopteryx",
-		"group": "Flyers",
-		"group_letter": "C",
-		"card number": 3,
-		"random_fact": "Pioneered as one of the earliest-known birds.",
-		"number_eggs": 4,
-		"territorial_range": 30,
-		"iq": 3,
-		"years": 155,
-		"length": 0.5,
-		"height": 0.3,
-		"weight": 0.5,
-		"number_skeletons": 12,
-		"number_teeth": 12,
-		"speed": 10,
-		"footprint": 5,
-		"nest_size": 5,
-		"tooth_size": 1,
-		"bite_force": 10,
-		"egg_size": 2,
-		"brain_size": 2,
-		"jaw_size": 3,
-		"encephalization": 0.05,
-		"img": "images/dinobilder/Archepteryx.jpg"
-	},
-	{
-		"name": "Dimorphodon",
-		"group": "Flyers",
-		"group_letter": "C",
-		"card number": 4,
-		"random_fact": "Boasted double rows of dagger-like teeth.",
-		"number_eggs": 3,
-		"territorial_range": 40,
-		"iq": 2,
-		"years": 148,
-		"length": 1.5,
-		"height": 0.5,
-		"weight": 3,
-		"number_skeletons": 8,
-		"number_teeth": 20,
-		"speed": 30,
-		"footprint": 10,
-		"nest_size": 8,
-		"tooth_size": 2,
-		"bite_force": 15,
-		"egg_size": 4,
-		"brain_size": 5,
-		"jaw_size": 5,
-		"encephalization": 0.08,
-		"img": "images/dinobilder/dimorphodon.png"
-	},
-	{
-		"name": "Parasaurolophus",
-		"group": "Hadrosaurs",
-		"group_letter": "D",
-		"card number": 1,
-		"random_fact": "Known for its head crest, possibly for communication.",
-		"number_eggs": 10,
-		"territorial_range": 500,
-		"iq": 3,
-		"years": 70,
-		"length": 10,
-		"height": 4,
-		"weight": 3000,
-		"number_skeletons": 15,
-		"number_teeth": 800,
-		"speed": 30,
-		"footprint": 40,
-		"nest_size": 120,
-		"tooth_size": 5,
-		"bite_force": 1500,
-		"egg_size": 10,
-		"brain_size": 50,
-		"jaw_size": 40,
-		"encephalization": 0.1,
-		"img": "images/dinobilder/parasaurolophus.png"
-	},
-	{
-		"name": "Corythosaurus",
-		"group": "Hadrosaurs",
-		"group_letter": "D",
-		"card number": 2,
-		"random_fact": "A distinguished duck-billed dinosaur from Canada.",
-		"number_eggs": 8,
-		"territorial_range": 400,
-		"iq": 2,
-		"years": 75,
-		"length": 8,
-		"height": 3,
-		"weight": 2000,
-		"number_skeletons": 10,
-		"number_teeth": 600,
-		"speed": 25,
-		"footprint": 30,
-		"nest_size": 100,
-		"tooth_size": 4,
-		"bite_force": 1200,
-		"egg_size": 8,
-		"brain_size": 40,
-		"jaw_size": 35,
-		"encephalization": 0.09,
-		"img": "images/dinobilder/corythosaurus.png"
-	},
-	{
-		"name": "Edmontosaurus",
-		"group": "Hadrosaurs",
-		"group_letter": "D",
-		"card number": 3,
-		"random_fact": "A herbivore with a vast array of grinding teeth.",
-		"number_eggs": 12,
-		"territorial_range": 600,
-		"iq": 3,
-		"years": 68,
-		"length": 12,
-		"height": 4.5,
-		"weight": 3500,
-		"number_skeletons": 12,
-		"number_teeth": 700,
-		"speed": 28,
-		"footprint": 35,
-		"nest_size": 110,
-		"tooth_size": 6,
-		"bite_force": 1400,
-		"egg_size": 12,
-		"brain_size": 60,
-		"jaw_size": 45,
-		"encephalization": 0.11,
-		"img": "images/dinobilder/edmontosaurus.png"
-	},
-	{
-		"name": "Lambeosaurus",
-		"group": "Hadrosaurs",
-		"group_letter": "D",
-		"card number": 4,
-		"random_fact": "Featuring a unique, hollow-headed appearance.",
-		"number_eggs": 9,
-		"territorial_range": 450,
-		"iq": 2,
-		"years": 72,
-		"length": 9,
-		"height": 3.2,
-		"weight": 2500,
-		"number_skeletons": 8,
-		"number_teeth": 500,
-		"speed": 26,
-		"footprint": 32,
-		"nest_size": 105,
-		"tooth_size": 4.5,
-		"bite_force": 1300,
-		"egg_size": 9,
-		"brain_size": 45,
-		"jaw_size": 38,
-		"encephalization": 0.09,
-		"img": "images/dinobilder/Lambeosaurus.png"
-	},
-
-	{
-		"name": "Ichthyosaurus",
-		"group": "Swimmers",
-		"group_letter": "E",
-		"card number": 1,
-		"random_fact": "An aquatic reptile known for its streamlined design.",
-		"number_eggs": 6,
-		"territorial_range": 150,
-		"iq": 2,
-		"years": 100,
-		"length": 4,
-		"height": 1.5,
-		"weight": 500,
-		"number_skeletons": 15,
-		"number_teeth": 80,
-		"speed": 40,
-		"footprint": 0,
-		"nest_size": 0,
-		"tooth_size": 3,
-		"bite_force": 500,
-		"egg_size": 6,
-		"brain_size": 15,
-		"jaw_size": 20,
-		"encephalization": 0.05,
-		"img": "images/dinobilder/Ichthyosaurus.png"
-	},
-	{
-		"name": "Mosasaurus",
-		"group": "Swimmers",
-		"group_letter": "E",
-		"card number": 2,
-		"random_fact": "A sea serpent equipped with fearsome jaws.",
-		"number_eggs": 4,
-		"territorial_range": 200,
-		"iq": 3,
-		"years": 68,
-		"length": 15,
-		"height": 6,
-		"weight": 3000,
-		"number_skeletons": 10,
-		"number_teeth": 100,
-		"speed": 50,
-		"footprint": 0,
-		"nest_size": 0,
-		"tooth_size": 5,
-		"bite_force": 1000,
-		"egg_size": 8,
-		"brain_size": 30,
-		"jaw_size": 40,
-		"encephalization": 0.07,
-		"img": "images/dinobilder/Mosasaurus.png"
-	},
-	{
-		"name": "Plesiosaurus",
-		"group": "Swimmers",
-		"group_letter": "E",
-		"card number": 3,
-		"random_fact": "Shares a family resemblance with the Loch Ness legend.",
-		"number_eggs": 6,
-		"territorial_range": 180,
-		"iq": 2,
-		"years": 85,
-		"length": 6,
-		"height": 2.5,
-		"weight": 800,
-		"number_skeletons": 8,
-		"number_teeth": 60,
-		"speed": 30,
-		"footprint": 0,
-		"nest_size": 0,
-		"tooth_size": 4,
-		"bite_force": 800,
-		"egg_size": 7,
-		"brain_size": 20,
-		"jaw_size": 25,
-		"encephalization": 0.06,
-		"img": "images/dinobilder/Plesiosaurus.png"
-	},
-	{
-		"name": "Nothosaurus",
-		"group": "Swimmers",
-		"group_letter": "E",
-		"card number": 4,
-		"random_fact": "Mastered the art of sleek swimming.",
-		"number_eggs": 5,
-		"territorial_range": 120,
-		"iq": 2,
-		"years": 110,
-		"length": 4.5,
-		"height": 1.8,
-		"weight": 600,
-		"number_skeletons": 6,
-		"number_teeth": 40,
-		"speed": 25,
-		"footprint": 0,
-		"nest_size": 0,
-		"tooth_size": 3.5,
-		"bite_force": 600,
-		"egg_size": 5,
-		"brain_size": 18,
-		"jaw_size": 22,
-		"encephalization": 0.05,
-		"img": "images/dinobilder/Nothosaurus2.png"
-	},
-	{
-		"name": "Stegosaurus",
-		"group": "Armored Dinosaurs",
-		"group_letter": "F",
-		"card number": 1,
-		"random_fact": "Famous for its bony plates and spiked tail.",
-		"number_eggs": 10,
-		"territorial_range": 300,
-		"iq": 2,
-		"years": 155,
-		"length": 9,
-		"height": 4,
-		"weight": 3500,
-		"number_skeletons": 20,
-		"number_teeth": 112,
-		"speed": 12,
-		"footprint": 40,
-		"nest_size": 120,
-		"tooth_size": 5,
-		"bite_force": 1500,
-		"egg_size": 10,
-		"brain_size": 40,
-		"jaw_size": 30,
-		"encephalization": 0.08,
-		"img": "images/dinobilder/Stegosaurus.png"
-	},
-	{
-		"name": "Ankylosaurus",
-		"group": "Armored Dinosaurs",
-		"group_letter": "F",
-		"card number": 2,
-		"random_fact": "Possessed formidable armor and a tail club.",
-		"number_eggs": 8,
-		"territorial_range": 250,
-		"iq": 2,
-		"years": 68,
-		"length": 7,
-		"height": 2.5,
-		"weight": 3000,
-		"number_skeletons": 12,
-		"number_teeth": 64,
-		"speed": 10,
-		"footprint": 30,
-		"nest_size": 100,
-		"tooth_size": 4,
-		"bite_force": 1200,
-		"egg_size": 8,
-		"brain_size": 35,
-		"jaw_size": 25,
-		"encephalization": 0.07,
-		"img": "images/dinobilder/Ankylosaurus.png"
-	},
-	{
-		"name": "Sauropelta",
-		"group": "Armored Dinosaurs",
-		"group_letter": "F",
-		"card number": 3,
-		"random_fact": "An armored dinosaur equipped with a bony shield.",
-		"number_eggs": 6,
-		"territorial_range": 200,
-		"iq": 2,
-		"years": 110,
-		"length": 6.5,
-		"height": 2.8,
-		"weight": 2000,
-		"number_skeletons": 8,
-		"number_teeth": 40,
-		"speed": 8,
-		"footprint": 35,
-		"nest_size": 80,
-		"tooth_size": 3,
-		"bite_force": 800,
-		"egg_size": 6,
-		"brain_size": 30,
-		"jaw_size": 20,
-		"encephalization": 0.06,
-		"img": "images/dinobilder/Sauropelta.png"
-	},
-	{
-		"name": "Kentrosaurus",
-		"group": "Armored Dinosaurs",
-		"group_letter": "F",
-		"card number": 4,
-		"random_fact": "Showcased a back adorned with spikes.",
-		"number_eggs": 8,
-		"territorial_range": 180,
-		"iq": 2,
-		"years": 125,
-		"length": 5.5,
-		"height": 2.2,
-		"weight": 1500,
-		"number_skeletons": 10,
-		"number_teeth": 48,
-		"speed": 15,
-		"footprint": 28,
-		"nest_size": 90,
-		"tooth_size": 4,
-		"bite_force": 1000,
-		"egg_size": 7,
-		"brain_size": 25,
-		"jaw_size": 18,
-		"encephalization": 0.05,
-		"img": "images/dinobilder/Kentrosaurus.png"
-	},
-	{
-		"name": "Velociraptor",
-		"group": "Small Theropods",
-		"group_letter": "G",
-		"card number": 1,
-		"random_fact": "A small yet intelligent and lethal predator.",
-		"number_eggs": 10,
-		"territorial_range": 50,
-		"iq": 50,
-		"years": 75,
-		"length": 2,
-		"height": 0.8,
-		"weight": 70,
-		"number_skeletons": 12,
-		"number_teeth": 80,
-		"speed": 40,
-		"footprint": 10,
-		"nest_size": 30,
-		"tooth_size": 3,
-		"bite_force": 500,
-		"egg_size": 5,
-		"brain_size": 20,
-		"jaw_size": 15,
-		"encephalization": 0.4,
-		"img": "images/dinobilder/Velociraptor.png"
-	},
-	{
-		"name": "Gallimimus",
-		"group": "Small Theropods",
-		"group_letter": "G",
-		"card number": 2,
-		"random_fact": "Renowned for its speed and bird-like features.",
-		"number_eggs": 12,
-		"territorial_range": 80,
-		"iq": 45,
-		"years": 70,
-		"length": 4,
-		"height": 2,
-		"weight": 200,
-		"number_skeletons": 8,
-		"number_teeth": 60,
-		"speed": 60,
-		"footprint": 20,
-		"nest_size": 40,
-		"tooth_size": 2,
-		"bite_force": 300,
-		"egg_size": 6,
-		"brain_size": 15,
-		"jaw_size": 12,
-		"encephalization": 0.35,
-		"img": "images/dinobilder/gallimimus.png"
-	},
-	{
-		"name": "Oviraptor",
-		"group": "Small Theropods",
-		"group_letter": "G",
-		"card number": 3,
-		"random_fact": "Misnamed, as it likely didn't steal eggs.",
-		"number_eggs": 8,
-		"territorial_range": 40,
-		"iq": 40,
-		"years": 68,
-		"length": 2.5,
-		"height": 1,
-		"weight": 50,
-		"number_skeletons": 6,
-		"number_teeth": 40,
-		"speed": 30,
-		"footprint": 8,
-		"nest_size": 25,
-		"tooth_size": 1.5,
-		"bite_force": 200,
-		"egg_size": 4,
-		"brain_size": 10,
-		"jaw_size": 8,
-		"encephalization": 0.3,
-		"img": "images/dinobilder/Oviraptor.png"
-	},
-	{
-		"name": "Dilophosaurus",
-		"group": "Small Theropods",
-		"group_letter": "G",
-		"card number": 4,
-		"random_fact": "An early Jurassic marvel with twin crests.",
-		"number_eggs": 6,
-		"territorial_range": 60,
-		"iq": 35,
-		"years": 150,
-		"length": 6,
-		"height": 2,
-		"weight": 150,
-		"number_skeletons": 10,
-		"number_teeth": 50,
-		"speed": 35,
-		"footprint": 15,
-		"nest_size": 35,
-		"tooth_size": 2.5,
-		"bite_force": 250,
-		"egg_size": 5,
-		"brain_size": 12,
-		"jaw_size": 10,
-		"encephalization": 0.28,
-		"img": "images/dinobilder/Dilophosaurus.png"
-	},
-	{
-		"name": "Triceratops",
-		"group": "Ceratopsians and Co.",
-		"group_letter": "H",
-		"card number": 1,
-		"random_fact": "Boasted a three-horned face-off strategy.",
-		"number_eggs": 12,
-		"territorial_range": 200,
-		"iq": 4,
-		"years": 66,
-		"length": 8,
-		"height": 3.5,
-		"weight": 9000,
-		"number_skeletons": 15,
-		"number_teeth": 800,
-		"speed": 20,
-		"footprint": 30,
-		"nest_size": 100,
-		"tooth_size": 6,
-		"bite_force": 1500,
-		"egg_size": 10,
-		"brain_size": 40,
-		"jaw_size": 30,
-		"encephalization": 0.1,
-		"img": "images/dinobilder/Triceratops.png"
-	},
-	{
-		"name": "Styracosaurus",
-		"group": "Ceratopsians and Co.",
-		"group_letter": "H",
-		"card number": 2,
-		"random_fact": "Distinguished by its nasal horn and head spikes.",
-		"number_eggs": 10,
-		"territorial_range": 180,
-		"iq": 3,
-		"years": 70,
-		"length": 5.5,
-		"height": 2.5,
-		"weight": 3000,
-		"number_skeletons": 10,
-		"number_teeth": 400,
-		"speed": 15,
-		"footprint": 25,
-		"nest_size": 80,
-		"tooth_size": 4,
-		"bite_force": 1200,
-		"egg_size": 8,
-		"brain_size": 35,
-		"jaw_size": 25,
-		"encephalization": 0.08,
-		"img": "images/dinobilder/Styracosaurus.png"
-	},
-	{
-		"name": "Pachycephalosaurus",
-		"group": "Ceratopsians and Co.",
-		"group_letter": "H",
-		"card number": 3,
-		"random_fact": "Engaged in head-butting contests.",
-		"number_eggs": 8,
-		"territorial_range": 100,
-		"iq": 2,
-		"years": 68,
-		"length": 4,
-		"height": 2,
-		"weight": 1000,
-		"number_skeletons": 6,
-		"number_teeth": 60,
-		"speed": 25,
-		"footprint": 15,
-		"nest_size": 40,
-		"tooth_size": 3,
-		"bite_force": 800,
-		"egg_size": 6,
-		"brain_size": 25,
-		"jaw_size": 20,
-		"encephalization": 0.06,
-		"img": "images/dinobilder/Pachycephalosaurus.png"
-	},
-	{
-		"name": "Protoceratops",
-		"group": "Ceratopsians and Co.",
-		"group_letter": "H",
-		"card number": 4,
-		"random_fact": "A petite herbivore adorned with a frill.",
-		"number_eggs": 6,
-		"territorial_range": 80,
-		"iq": 2,
-		"years": 75,
-		"length": 2.5,
-		"height": 1.2,
-		"weight": 300,
-		"number_skeletons": 8,
-		"number_teeth": 100,
-		"speed": 10,
-		"footprint": 10,
-		"nest_size": 20,
-		"tooth_size": 2,
-		"bite_force": 400,
-		"egg_size": 4,
-		"brain_size": 15,
-		"jaw_size": 12,
-		"encephalization": 0.05,
-		"img": "images/dinobilder/Protoceratops.png"
-	}];
-
-  onMount(() => {
-    getQuestion();
-  });
-
-  function getQuestion() {
-  // Hier wird die Schwierigkeitsstufe zufällig ausgewählt (easy, medium, hard)
-  const difficultyLevels = ["easy", "medium", "hard"];
-    const randomDifficulty = difficultyLevels[Math.floor(Math.random() * difficultyLevels.length)];
-
-    const randomQuestion = generateRandomQuestion(data, randomDifficulty);
-
-    if (randomQuestion) {
-      init(randomQuestion);
+      showQuizContent = true; // Setze showQuizContent auf true, um die
+      showCorrectAnswer = false;
+      showIncorrectAnswer = false;
+      totalQuestions
+      updateProgress();
     } else {
-      console.error(`No questions found for difficulty: ${randomDifficulty}`);
+      console.log("Ende des Quiz");
+      quizCompleted = true;
+      // Hier kannst du weitere Aktionen durchführen, wenn das Quiz zu Ende ist
+    }
+  }
+  function startQuiz() {
+    // Function to start the quiz
+    quizStarted = true;
+    showQuizContent = true; // Set showQuizContent to true when starting the quiz
+    totalQuestions = QuestionArray.length; // Setze die Gesamtanzahl der Fragen
+  }
+
+  function updateProgress() {
+    progress = currentQuestionIndex + 1;
+  }
+  function skipQuestion() {
+    //funktion für skip button
+    // Prüfe, ob es noch mehr Fragen gibt
+    if (currentQuestionIndex < totalQuestions - 1) {
+      currentQuestionIndex++;
+      updateProgress();
+    } else {
+      // Zeige eine Nachricht oder handle das Ende des Quiz
+      console.log("End of Quiz");
     }
   }
 
-  
-  function init(questionData) {
-    question = questionData.question;
-    answers = questionData.options;
-    isRight = '';
-    numQuestions++;
-  }
-
-  function checkAnswer(event) {
-    const selectedAnswer = event.target.value;
-    const correctAnswer = answers.find(answer => answer.letter === selectedAnswer);
-
-    if (correctAnswer.correct) {
-      score += correctAnswer.points;
-      isRight = '👍 Correct!';
-    } else {
-      isRight = '👎 Wrong!';
-    }
-  
-}
 
 
-  
-  function generateRandomQuestion(data, difficulty) {
-  // Filter questions based on difficulty
-  const filteredQuestions = data.filter(question => question.difficulty === difficulty);
-
-  if (filteredQuestions.length === 0) {
-    // No questions found for the given difficulty
-    return null; 
-    console.log("keine Frage gefunden,die schwierigkeitslevel schwer hat");
-  }
-
-  // Randomly select a question from the filtered list
-  const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
-  const selectedQuestion = filteredQuestions[randomIndex];
-
-  // Shuffle the options to ensure the correct answer is not always in the same position
-  const shuffledOptions = [...selectedQuestion.options];
-  for (let i = shuffledOptions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-  }
-
-  // Return the randomly generated question
-  return {
-    question: selectedQuestion.question,
-    options: shuffledOptions,
-    correctAnswer: selectedQuestion.correctAnswer,
-  };
-}
 
 </script>
 
 <main>
-  {#if numQuestions === 0}
-    <p>Loading ...</p>
-  {:else}
-    <h1>Quiz</h1>
-    <h2>Question</h2>
-    <p class="question">{question}</p>
-    <h2>Answers</h2>
-    <ul>
-      {#each answers as answer (answer)}
-        <li ><strong>{answer.letter.toUpperCase()}</strong>: {answer.value}</li>
-      {/each}
-    </ul>
-    <h2>Choose Answer</h2>
-    <select on:change={checkAnswer}>
-      <option value="select" selected>Select</option>
-      {#each answers as answer (answer)}
-        <option value={answer.letter}>{answer.letter}</option>
-      {/each}
-    </select>
-    <strong>Result</strong>: <span class="is-right">{isRight}</span>
-    <div>
-      <strong>Score</strong>: {score}/{numQuestions}
-    </div>
-    <div style="margin-top: 1rem;">
-      <button on:click={getQuestion}>Next Question</button>
-    </div>
+  <div class="quiz-container">
+    {#if !quizStarted }
+      <!-- <StartQuiz on:startQuiz={() => (quizStarted = true)} /> -->
+        <StartQuiz on:startQuiz={startQuiz} />
+    {/if}
+
+    {#if quizStarted}
+      {#if !nameGenerated}
+        <div id="container">        
+          <PlayerName />
+          <button class="weiterButton" on:click={() => {nameGenerated=true}}>Start</button></div>
+        {:else}
+        <div class="progress-bar">
+        <div class="progress" style="width: {progress / totalQuestions * 100}%"></div>
+        {#if !showCorrectAnswer && !showIncorrectAnswer}
+          <div class="textProgress"> Frage: {progress} von {totalQuestions}</div>
+        {/if}	
+      </div>
+      {#await method()}
+        <p>Loading ...</p>
+      {:then value}
+
+      
+      
+        {#if !showCorrectAnswer && !showIncorrectAnswer}
+          <h2>{value[currentQuestionIndex].question}</h2>
+          <!-- <img src="images/BilderQuiz/DinoBildQuiz.png" alt="Alternative Text für das Bild" /> -->
+          <div class="answer-grid">
+          {#each QuestionArray[currentQuestionIndex].Options as dino, i}
+            <button on:click={() => selectOption(i)}>{dino.name}</button>
+          {/each}
+        </div>
+    
+          <button class="skip-button" on:click={skipQuestion} style="font-size: 14px;">Skip</button>
+          <a class="leave-button" href="/" style="text-decoration: none;"> Verlassen </a>
+        {/if}
+      
+
+        {#if showCorrectAnswer || showIncorrectAnswer}
+          {#if showCorrectAnswer}
+            <CorrectAnswer {onNext} />
+          {/if}
+
+          {#if showIncorrectAnswer}
+            <IncorrectAnswer {onNext} />
+          {/if}
   {/if}
+
+  {#if quizCompleted }
+ 
+  <div>
+    <h2>Quiz beendet!</h2>
+    <a class="backHome" href="/">Zurück zur Startseite</a>
+  </div>
+  {/if}
+
+      {/await}
+      {/if}
+    {/if}
+  </div>
 </main>
 
 <style>
+  /* h1{
+    color: #D9D9D9;
+    position: absolute;
+        left: 50%;
+        top: 15%;
+        transform: translate(-50%,-50%);
+        padding:1rem; 
+        
+  } */
+  h2 {
+    color: #D9D9D9;
+    position: absolute;
+        left: 50%;
+        top: 12%;
+        transform: translate(-50%,-50%);
+        padding:1rem; 
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        text-align: center; 
+    
+      
+  }
 
-	h1 {
-		font-size: 1.85rem;
-		margin-bottom: 0.5rem;
-	}
-	h2 {
-		font-size: 1.25rem;
-		margin-bottom: 0.5rem;
-	}	
-	ul {
-		list-style: none;
-		padding-left: 0;
-		margin: 0.7rem 0 1rem 0;		
-	}
-	p {
-		margin-top: 0.5rem;
-	}
-	li {
-		margin-bottom: 10px;
-	}		
-	input[type=button] {		
-		border: 1px solid #666;
-		padding: 0.2rem 0.5rem;
-		border: 1px outset #ccc;
-		padding: 0.25rem 1rem;
-	}
-	input[type=button]:hover {
-		background-color: red;
-	}
-	input[type=button]:active {
-		border: 1px inset #ccc;
-	}
-	.is-right {
-		font-size: 1.5rem;			
-	}
-	.question {
-		min-height: 60px;
-	}
-	select {		
-		margin: 0.5rem 1rem 1rem 0;
-		padding: 0.2rem 0.5rem;		
-	}
-	select, input[type=button] {
-		font-size: 85%;
-		background-color: crimson;
-		color: white;
-		border-radius: 6px;
-	}
-</style>
-
-
-
-
-
-
-<!-- Logik code für die Quizfragen wo computer dinos random nehmen soll und antworten noch nicht vorgefertigt sind-->
-
-<!-- <script>
-  let AnzahlDinos = 32
-  let RandomZahlen = [];
-  let DinoArray = [];
-  let Json1;
-  let VergleichsWerte = Gewicht;
+  .weiterButton{
   
-  async function RandomFrage(){
-    const response1 = await fetch("./src/assets/data.json");
-      const json1 = await response1.json();
-      dinoJson = json1;
+        position:absolute;
+        font-family: "Inter", sans-serif;
+    
+        background-color: #C0E799; 
+       
+   color: black; 
 
-    for(let i; i < 4; i++){
-      let num = Math.random()*AnzahlDinos
-      while(RandomZahlen.includes(num)){
-        num = Math.random()*AnzahlDinos
-      }
-      RandomZahlen.push(num)
-    }
+   padding: 10px 20px; 
+   font-size: 16px; 
+   border: none; 
+   border-radius: 5px; 
+   cursor: pointer; 
+   width:390px;
+   height: 60px;
+   cursor: pointer; 
+        left: 50%;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        
+  }
 
-for(let i; i<4; i++){
-  DinoArray.push(JsonFile[Json1[i]])
-}
+  .answer-grid {
+    position: fixed;
+   bottom: 0;
+    width: 90%;
+    left: 0;
+  
+    padding: 0 20px;
+    display: grid;
+    margin:80px;
+    height:170px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    text-align: center;
+    margin-top:600px;
+    
+  }
 
-// wird nicht gehen
-let Lösung;
-
-Lösung = val1;
-
-if(!(Lösung > val2)){
-  Lösung = val2;
-}
-if(!(Lösung > val3)){
-  Lösung = val3;
-}
-if(!(Lösung > val4)){
-  Lösung = val4;
-}
+  .skip-button {
+    position: absolute;
+    top: 60px;
+    right: 30px;
+    width: 110px;
+    height: 60px;
+    background-color: #595959; /* Rote Farbe, ändere sie nach Bedarf */
+    color: #D9D9D9;
+    padding: 10px;
+    border: none;
+    border-radius: 80px;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+  }
+  .leave-button{
+    position: absolute;
+    top: 60px;
+    left:30px;
+    width: 110px;
+    height: 60px;
+    background-color: #595959; /* Rote Farbe, ändere sie nach Bedarf */
+    color: #D9D9D9;
+    border: none;
+    border-radius: 80px;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    padding: 1rem;
+    text-align: center;
+    font-size: 14px;
+    line-height: 30px;
+  }
+  .progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px; 
+  background-color: grey; 
+  z-index: 1000; 
+  color: #D9D9D9;
 
   }
-</script> -->
+  .progress {
+    height: 20px; 
+    background-color: #C0E799;
+  }
+  .textProgress{
+    position: fixed;
+  
+        left: 50%;
+        margin: 25px;
+        transform: translate(-50%,-50%);
+        padding:1rem; 
+        color:grey;
+        font-family:"Inter", sans-serif;
+  }
+  button{
+    font-size: 20px;
+    font-family:"Inter", sans-serif;
+  }
+  #container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+   
+  }
+  img {
+    width: 20%;
+    height:20%;
+    max-width: 20%; /* Optional: Begrenze die maximale Breite */
+    max-height: 30%;
+
+    margin-top: 200px; /* Hiermit wird das Bild horizontal zentriert */
+    margin-left:40%;
+ }
+
+ .backHome{
+    position:absolute;
+    margin-top: 150px;
+    margin-left:50%;  
+    padding: 10px 20px;
+    background-color: #595959;
+    color: #D9D9D9;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    transform: translate(-50%,-50%);
+ }
+</style>

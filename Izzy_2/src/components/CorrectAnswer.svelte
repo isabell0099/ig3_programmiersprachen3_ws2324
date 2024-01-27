@@ -30,5 +30,18 @@ function handleNext() {
    
     h1{
     color: white; 
+    font-family: "Inter", sans-serif;
+   }
+
+   button{
+   
+    background-color: lightgrey; 
+    color: black; 
+    margin-top: 10px;
+    padding: 10px 20px; 
+    font-size: 16px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
    }
   </style>

@@ -232,7 +232,7 @@ console.log(numbers);
         {/if}
       
 
-        {#if showCorrectAnswer || showIncorrectAnswer}
+        {#if showCorrectAnswer || showIncorrectAnswer && !quizCompleted}
           {#if showCorrectAnswer}
             <CorrectAnswer {onNext} />
           {/if}
@@ -244,8 +244,8 @@ console.log(numbers);
 
   {#if quizCompleted }
  
-  <div>
-    <h2>Quiz beendet!</h2>
+  <div class="finishQuiz">
+    <h1>Quiz beendet!</h1>
     <a class="backHome" href="/">Zurück zur Startseite</a>
   </div>
   {/if}
@@ -257,15 +257,15 @@ console.log(numbers);
 </main>
 
 <style>
-  /* h1{
+  h1{
     color: #D9D9D9;
     position: absolute;
         left: 50%;
-        top: 15%;
+        top: 25%;
         transform: translate(-50%,-50%);
-        padding:1rem; 
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
         
-  } */
+  }
   h2 {
     color: #D9D9D9;
     position: absolute;
@@ -283,11 +283,8 @@ console.log(numbers);
   
         position:absolute;
         font-family: "Inter", sans-serif;
-    
         background-color: #C0E799; 
-       
-   color: black; 
-
+   color: black;
    padding: 10px 20px; 
    font-size: 16px; 
    border: none; 
@@ -396,9 +393,7 @@ console.log(numbers);
  }
 
  .backHome{
-    position:absolute;
-    margin-top: 150px;
-    margin-left:50%;  
+    position:absolute; 
     padding: 10px 20px;
     background-color: #595959;
     color: #D9D9D9;
@@ -408,6 +403,10 @@ console.log(numbers);
     font-family: "Inter", sans-serif;
     cursor: pointer;
     font-size: 14px;
-    transform: translate(-50%,-50%);
+    left: 50%;
+        top: 40%;
+        transform: translate(-50%, -50%);
  }
+
+
 </style>

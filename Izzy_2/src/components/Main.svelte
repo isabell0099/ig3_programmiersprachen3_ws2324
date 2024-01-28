@@ -1,33 +1,25 @@
 <script>
+  // Variables
+  import { INFO_TEXT, INTRO_TEXT } from "../js/constants";
+  // Components
+  import TextWrapper from "./TextWrapper.svelte";
+  import Cards from "./Cards.svelte";
+  import { filterBy } from "../js/functions";
+  // Exports
+  export let value; // Der Wert des Input-Elements
+  export let data; // Alle Dinosaurier-Daten
+  export let filter = "";
 
-	
-	// Variables
-	import { INFO_TEXT, INTRO_TEXT } from "../js/constants";
-	// Components
-	import TextWrapper from "./TextWrapper.svelte";
-	import Cards from "./Cards.svelte";
-	import { filterBy } from "../js/functions";
-	// Exports
-	export let value; // Der Wert des Input-Elements
-	export let data; // Alle Dinosaurier-Daten
-	export let filter = "";
+  let json = [];
+  let groupFilteredData = [];
 
-	let json = [];
-	let groupFilteredData = [];
+  $: {
+    console.log("Main.svelte: ", value);
+    json = filterBy(data, "name", value);
 
-	$: {
-		console.log("Main.svelte: ", value);
-		json = filterBy(data, "name", value);
-
-		 // Hier nach "group" filtern
-		 json = filterBy(json, "group", filter);
-	
-
-	}
-
-
-
-
+    // Hier nach "group" filtern
+    json = filterBy(json, "group", filter);
+  }
 </script>
 
 <!--
@@ -49,33 +41,35 @@
 	   werden konnten.
 
 -->
-<main>
-{#if json.length > 0 || groupFilteredData.length > 0}
-	<TextWrapper introText={INTRO_TEXT} infoText={INFO_TEXT} />
 
-	<!--  await delay function(set timeout) -->
-	{#await json}
-		<p>Loading ...</p>
-	{:then data}
-		<Cards json={data} />
-	{/await}
-{:else}
-	<div class="empty-state">
-		<h2>No results found</h2>
-	</div>
-{/if}
+<main>
+  {#if json.length > 0 || groupFilteredData.length > 0}
+    <TextWrapper introText={INTRO_TEXT} infoText={INFO_TEXT} />
+
+    <!--  await delay function(set timeout) -->
+    {#await json}
+      <p>Loading ...</p>
+    {:then data}
+      <Cards json={data} />
+    {/await}
+  {:else}
+    <div class="empty-state">
+      <h2>No results found</h2>
+    </div>
+  {/if}
 </main>
+
 <style>
-	/* TODO: Complete and style empty state */
-	.empty-state {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 80svh;
-	}
-	.empty-state h2 {
-		font-size: 2rem;
-		color: rgb(186, 185, 185);
-		font-family: "Inter", sans-serif;
-	}
+  /* TODO: Complete and style empty state */
+  .empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80svh;
+  }
+  .empty-state h2 {
+    font-size: 2rem;
+    color: rgb(186, 185, 185);
+    font-family: "Inter", sans-serif;
+  }
 </style>

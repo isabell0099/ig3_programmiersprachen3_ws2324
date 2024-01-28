@@ -1,16 +1,13 @@
 <script>
   import OpenAI from "openai";
-  import { playername } from '../store.js';
-  import { createEventDispatcher } from 'svelte';
+  import { playername } from "../store.js";
+  import { createEventDispatcher } from "svelte";
 
   let playerNameGenerated;
 
   const dispatch = createEventDispatcher();
 
-  
- 
   let isLoading = false;
- 
 
   const runPrompt = async () => {
     const config = {
@@ -30,9 +27,8 @@
       });
 
       console.log("API-Response:", response);
-      playername.set(response.choices[0].message.content); 
+      playername.set(response.choices[0].message.content);
       dispatch("playerNameGenerated");
-
     } catch (error) {
       // console.error("Error while retrieving the dinosaur name:", error);
     } finally {
@@ -42,27 +38,19 @@
 </script>
 
 <div class="playername">
-
-  
-  <h1> Erstelle dein Gamer-Name</h1>
-  
-  
+  <h1>Erstelle dein Gamer-Name</h1>
 
   <div class="result-container">
-  {#if isLoading}
-    <p>Loading...</p>
-  {:else}
- 
-    <p class="result">{$playername}</p>
-  {/if}
-</div>
+    {#if isLoading}
+      <p>Loading...</p>
+    {:else}
+      <p class="result">{$playername}</p>
+    {/if}
+  </div>
 
-<div class="input-controls">
-  <button on:click={runPrompt} disabled={isLoading}>Generiere!</button>
-</div>
- 
-  
-  
+  <div class="input-controls">
+    <button on:click={runPrompt} disabled={isLoading}>Generiere!</button>
+  </div>
 </div>
 
 <style>
@@ -76,11 +64,10 @@
     color: #fff !important;
   }
 
-  h1{
+  h1 {
     color: rgb(186, 185, 185);
     margin-top: 6%;
-    padding:20px;
-    
+    padding: 20px;
   }
 
   .input-controls {
@@ -92,33 +79,30 @@
   }
 
   .result-container {
-   
     background-color: rgb(94, 93, 93);
-    padding: 10px; 
+    padding: 10px;
     border-radius: 80px; /* Abgerundete Ecken */
-    margin-top: 10px; 
+    margin-top: 10px;
     justify-content: center;
   }
 
-
   button {
-  
-    background-color: lightgrey; 
-   color: black; 
-   font-family: "Inter", sans-serif;
-   margin-top: 150px;
-   
-   font-size: 16px; 
-   border: none; 
-   border-radius: 5px; 
-   cursor: pointer; 
-   width:390px;
-   height:60px;
+    background-color: lightgrey;
+    color: black;
+    font-family: "Inter", sans-serif;
+    margin-top: 150px;
+
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 390px;
+    height: 60px;
   }
 
   p {
     font-size: 1rem;
-    color:grey;
+    color: grey;
     padding: 8px;
   }
 
@@ -127,6 +111,5 @@
     color: lightgray;
     font-size: 1rem;
     padding: 8px;
-  
   }
 </style>

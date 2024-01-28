@@ -5,7 +5,6 @@
   import PlayerName from "./PlayerName.svelte";
   import { createEventDispatcher } from "svelte";
 
-
   let nameGenerated = false;
   let dinoJson = [];
   let quizJson = [];
@@ -16,8 +15,6 @@
   let QuestionArray = [];
 
   let quizCompleted = false;
-
-  
 
   // Variablen für randomFrage
   let AnzahlDinos = 32;
@@ -30,7 +27,7 @@
   let showCorrectAnswer = false;
   let showIncorrectAnswer = false;
 
-  let totalQuestions ; // Setze die Gesamtanzahl der Fragen
+  let totalQuestions; // Setze die Gesamtanzahl der Fragen
   let progress = 1; // Fortschritt beginnt bei 1
 
   function getRandoms(max) {
@@ -47,8 +44,6 @@
     return values;
   }
 
-
-
   async function method() {
     const response1 = await fetch("./src/assets/data.json");
     const response2 = await fetch("./src/assets/quizData.json");
@@ -61,8 +56,7 @@
     RandomZahlen = []; // Zurücksetzen der RandomZahlen für jede Frage
     DinoArray = []; // Zurücksetzen des DinoArray für jede Frage
 
-    
-console.log(numbers);
+    console.log(numbers);
     for (let i = 0; i < numbers.length; i++) {
       let currentKeyIndex = numbers[i];
       currentKeyToCompare = quizJson[currentKeyIndex].key; // Setze den aktuellen key-Wert in der Reihenfolge der gestellten Fragen
@@ -79,7 +73,7 @@ console.log(numbers);
   }
 
   async function RandomQuestionManyDinos() {
-    console.log("Quiz-Teil wird angezeigt")
+    console.log("Quiz-Teil wird angezeigt");
     DinoArray = [];
     console.log("Start RandomQuestionManyDinos");
     const response1 = await fetch("./src/assets/data.json");
@@ -100,8 +94,6 @@ console.log(numbers);
       DinoArray.push(dinoJson[num]);
     }
     console.log(DinoArray);
-
-    
 
     let highestValue = DinoArray[0][currentKeyToCompare];
     let DinoIndex = 0;
@@ -125,15 +117,12 @@ console.log(numbers);
     };
 
     QuestionArray.push(object);
-   
-    console.log(QuestionArray);
 
+    console.log(QuestionArray);
   }
 
- 
-
   function selectOption(optionIndex) {
-    // Hier kannst du die Logik für die ausgewählte Antwortoption implementieren
+    // Hier kannst die Logik für die ausgewählte Antwortoption implementieren
     const selectedDino =
       QuestionArray[currentQuestionIndex].Options[optionIndex];
     const correctAnswer = QuestionArray[currentQuestionIndex].Answer;
@@ -151,14 +140,13 @@ console.log(numbers);
   }
 
   function onNext() {
-    
     if (currentQuestionIndex < QuestionArray.length - 1) {
       currentQuestionIndex++;
 
       showQuizContent = true; // Setze showQuizContent auf true, um die
       showCorrectAnswer = false;
       showIncorrectAnswer = false;
-      totalQuestions
+      totalQuestions;
       updateProgress();
     } else {
       console.log("Ende des Quiz");
@@ -187,133 +175,134 @@ console.log(numbers);
       console.log("End of Quiz");
     }
   }
-
-
-
-
 </script>
 
 <main>
   <div class="quiz-container">
-    {#if !quizStarted }
+    {#if !quizStarted}
       <!-- <StartQuiz on:startQuiz={() => (quizStarted = true)} /> -->
-        <StartQuiz on:startQuiz={startQuiz} />
+      <StartQuiz on:startQuiz={startQuiz} />
     {/if}
 
     {#if quizStarted}
       {#if !nameGenerated}
-        <div id="container">        
+        <div id="container">
           <PlayerName />
-          <button class="weiterButton" on:click={() => {nameGenerated=true}}>Start</button></div>
-        {:else}
-        <div class="progress-bar">
-        <div class="progress" style="width: {progress / totalQuestions * 100}%"></div>
-        {#if !showCorrectAnswer && !showIncorrectAnswer}
-          <div class="textProgress"> Frage: {progress} von {totalQuestions}</div>
-        {/if}	
-      </div>
-      {#await method()}
-        <p>Loading ...</p>
-      {:then value}
-
-      
-      
-        {#if !showCorrectAnswer && !showIncorrectAnswer}
-          <h2>{value[currentQuestionIndex].question}</h2>
-          <!-- <img src="images/BilderQuiz/DinoBildQuiz.png" alt="Alternative Text für das Bild" /> -->
-          <div class="answer-grid">
-          {#each QuestionArray[currentQuestionIndex].Options as dino, i}
-            <button on:click={() => selectOption(i)}>{dino.name}</button>
-          {/each}
+          <button
+            class="weiterButton"
+            on:click={() => {
+              nameGenerated = true;
+            }}>Start</button
+          >
         </div>
-    
-          <button class="skip-button" on:click={skipQuestion} style="font-size: 14px;">Skip</button>
-          <a class="leave-button" href="/" style="text-decoration: none;"> Verlassen </a>
-        {/if}
-      
+      {:else}
+        <div class="progress-bar">
+          <div
+            class="progress"
+            style="width: {(progress / totalQuestions) * 100}%"
+          ></div>
+          {#if !showCorrectAnswer && !showIncorrectAnswer}
+            <div class="textProgress">
+              Frage: {progress} von {totalQuestions}
+            </div>
+          {/if}
+        </div>
+        {#await method()}
+          <p>Loading ...</p>
+        {:then value}
+          {#if !showCorrectAnswer && !showIncorrectAnswer}
+            <h2>{value[currentQuestionIndex].question}</h2>
+            <!-- <img src="images/BilderQuiz/DinoBildQuiz.png" alt="Alternative Text für das Bild" /> -->
+            <div class="answer-grid">
+              {#each QuestionArray[currentQuestionIndex].Options as dino, i}
+                <button on:click={() => selectOption(i)}>{dino.name}</button>
+              {/each}
+            </div>
 
-        {#if showCorrectAnswer || showIncorrectAnswer && !quizCompleted}
-          {#if showCorrectAnswer}
-            <CorrectAnswer {onNext} />
+            <button
+              class="skip-button"
+              on:click={skipQuestion}
+              style="font-size: 14px;">Skip</button
+            >
+            <a class="leave-button" href="/" style="text-decoration: none;">
+              Verlassen
+            </a>
           {/if}
 
-          {#if showIncorrectAnswer}
-            <IncorrectAnswer {onNext} />
+          {#if showCorrectAnswer || (showIncorrectAnswer && !quizCompleted)}
+            {#if showCorrectAnswer}
+              <CorrectAnswer {onNext} />
+            {/if}
+
+            {#if showIncorrectAnswer}
+              <IncorrectAnswer {onNext} />
+            {/if}
           {/if}
-  {/if}
 
-  {#if quizCompleted }
- 
-  <div class="finishQuiz">
-    <h1>Quiz beendet!</h1>
-    <a class="backHome" href="/">Zurück zur Startseite</a>
-  </div>
-  {/if}
-
-      {/await}
+          {#if quizCompleted}
+            <div class="finishQuiz">
+              <h1>Quiz beendet!</h1>
+              <a class="backHome" href="/">Zurück zur Startseite</a>
+            </div>
+          {/if}
+        {/await}
       {/if}
     {/if}
   </div>
 </main>
 
 <style>
-  h1{
-    color: #D9D9D9;
+  h1 {
+    color: #d9d9d9;
     position: absolute;
-        left: 50%;
-        top: 25%;
-        transform: translate(-50%,-50%);
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
-        
+    left: 50%;
+    top: 25%;
+    transform: translate(-50%, -50%);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
   }
+  
   h2 {
-    color: #D9D9D9;
+    color: #d9d9d9;
     position: absolute;
-        left: 50%;
-        top: 12%;
-        transform: translate(-50%,-50%);
-        padding:1rem; 
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
-        text-align: center; 
-    
-      
+    left: 50%;
+    top: 12%;
+    transform: translate(-50%, -50%);
+    padding: 1rem;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
   }
 
-  .weiterButton{
-  
-        position:absolute;
-        font-family: "Inter", sans-serif;
-        background-color: #C0E799; 
-   color: black;
-   padding: 10px 20px; 
-   font-size: 16px; 
-   border: none; 
-   border-radius: 5px; 
-   cursor: pointer; 
-   width:390px;
-   height: 60px;
-   cursor: pointer; 
-        left: 50%;
-        top: 40%;
-        transform: translate(-50%, -50%);
-        
+  .weiterButton {
+    position: absolute;
+    font-family: "Inter", sans-serif;
+    background-color: #c0e799;
+    color: black;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 390px;
+    height: 60px;
+    cursor: pointer;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
   }
 
   .answer-grid {
     position: fixed;
-   bottom: 0;
+    bottom: 0;
     width: 90%;
     left: 0;
-  
     padding: 0 20px;
     display: grid;
-    margin:80px;
-    height:170px;
+    margin: 80px;
+    height: 170px;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     text-align: center;
-    margin-top:600px;
-    
+    margin-top: 600px;
   }
 
   .skip-button {
@@ -323,21 +312,22 @@ console.log(numbers);
     width: 110px;
     height: 60px;
     background-color: #595959; /* Rote Farbe, ändere sie nach Bedarf */
-    color: #D9D9D9;
+    color: #d9d9d9;
     padding: 10px;
     border: none;
     border-radius: 80px;
     font-family: "Inter", sans-serif;
     cursor: pointer;
   }
-  .leave-button{
+
+  .leave-button {
     position: absolute;
     top: 60px;
-    left:30px;
+    left: 30px;
     width: 110px;
     height: 60px;
     background-color: #595959; /* Rote Farbe, ändere sie nach Bedarf */
-    color: #D9D9D9;
+    color: #d9d9d9;
     border: none;
     border-radius: 80px;
     font-family: "Inter", sans-serif;
@@ -347,56 +337,59 @@ console.log(numbers);
     font-size: 14px;
     line-height: 30px;
   }
-  .progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 20px; 
-  background-color: grey; 
-  z-index: 1000; 
-  color: #D9D9D9;
 
-  }
-  .progress {
-    height: 20px; 
-    background-color: #C0E799;
-  }
-  .textProgress{
+  .progress-bar {
     position: fixed;
-  
-        left: 50%;
-        margin: 25px;
-        transform: translate(-50%,-50%);
-        padding:1rem; 
-        color:grey;
-        font-family:"Inter", sans-serif;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background-color: grey;
+    z-index: 1000;
+    color: #d9d9d9;
   }
-  button{
+
+  .progress {
+    height: 20px;
+    background-color: #c0e799;
+  }
+  .textProgress {
+    position: fixed;
+
+    left: 50%;
+    margin: 25px;
+    transform: translate(-50%, -50%);
+    padding: 1rem;
+    color: grey;
+    font-family: "Inter", sans-serif;
+  }
+
+  button {
     font-size: 20px;
-    font-family:"Inter", sans-serif;
+    font-family: "Inter", sans-serif;
   }
-  #container{
+
+  #container {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-   
   }
+
   img {
     width: 20%;
-    height:20%;
+    height: 20%;
     max-width: 20%; /* Optional: Begrenze die maximale Breite */
     max-height: 30%;
 
     margin-top: 200px; /* Hiermit wird das Bild horizontal zentriert */
-    margin-left:40%;
- }
+    margin-left: 40%;
+  }
 
- .backHome{
-    position:absolute; 
+  .backHome {
+    position: absolute;
     padding: 10px 20px;
     background-color: #595959;
-    color: #D9D9D9;
+    color: #d9d9d9;
     border: none;
     border-radius: 5px;
     text-decoration: none;
@@ -404,9 +397,7 @@ console.log(numbers);
     cursor: pointer;
     font-size: 14px;
     left: 50%;
-        top: 40%;
-        transform: translate(-50%, -50%);
- }
-
-
+    top: 40%;
+    transform: translate(-50%, -50%);
+  }
 </style>
